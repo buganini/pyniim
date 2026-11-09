@@ -7,6 +7,19 @@ from operator import xor
 from .errors import ProtocolError
 
 
+def parse_print_status(data):
+    """Decode B3 progress; only the known 10-byte layout has an error field."""
+    if len(data) < 4:
+        raise ProtocolError("Truncated print status")
+    return dict(
+        pages=int.from_bytes(data[:2], "big"),
+        print_percent=data[2],
+        feed_percent=data[3],
+        error_code=data[6] if len(data) == 10 else None,
+        raw=data.hex(),
+    )
+
+
 @dataclass(frozen=True)
 class Packet:
     command: int

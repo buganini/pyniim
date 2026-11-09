@@ -12,7 +12,7 @@ from . import Printer, __version__
 from .backends.helpers import discover as discover_printers
 from .backends.helpers import send
 from .conversion import convert
-from .errors import PyniimError
+from .errors import PrintError, PyniimError
 from .job import PrintJob
 from .labels import LabelsManager
 from .models import ALL_MODELS, SOURCE_REVISION, ModelsManager
@@ -40,6 +40,37 @@ def emit(value, as_json):
         click.echo(json.dumps(value, ensure_ascii=False, indent=2))
 
 
+def checked_print(function):
+    @functools.wraps(function)
+    def wrapped(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except (
+            PyniimError,
+            BleakError,
+            ValueError,
+            OSError,
+            TimeoutError,
+            click.ClickException,
+        ) as exc:
+            message = str(exc) or type(exc).__name__
+            if kwargs.get("as_json"):
+                # Preflight failures have no device progress; do not invent it.
+                result = dict(exc.result) if isinstance(exc, PrintError) else {"outcome": "error"}
+                emit(dict(result, error=message), True)
+                raise click.exceptions.Exit(1) from exc
+            if isinstance(exc, PrintError):
+                message += (
+                    f" [outcome={exc.result['outcome']}; "
+                    f"pages_printed={exc.result['pages_printed']} (last reported)]"
+                )
+            if isinstance(exc, click.ClickException):
+                raise
+            raise click.ClickException(message) from exc
+
+    return wrapped
+
+
 def printer_id(ctx):
     if not ctx.obj["printer"]:
         raise click.UsageError("Specify --printer or PYNIIM_PRINTER")
@@ -64,7 +95,7 @@ def printer_id(ctx):
 @click.version_option(__version__)
 @click.pass_context
 def cli(ctx, backend, model, printer, debug, bleak_debug, write_delay_ms):
-    """Experimental NIIMBOT BLE printing; M2_H only, not hardware verified."""
+    """Experimental NIIMBOT BLE printing; M2_H single-label success reported."""
     ctx.obj = dict(backend=backend, model=model, printer=printer, write_delay_ms=write_delay_ms)
     logging.basicConfig(
         level=logging.WARNING, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
@@ -161,13 +192,16 @@ def make_job(ctx, **options):
 
 @cli.command("print")
 @image_options
+@click.option("--json", "as_json", is_flag=True, help="Emit results and runtime errors as JSON")
 @click.pass_context
-@checked
-def print_cmd(ctx, **options):
+@checked_print
+def print_cmd(ctx, as_json, **options):
     """Convert images and wait for confirmed printing."""
     identifier = printer_id(ctx)
     job = make_job(ctx, **options)
-    emit(send(job, identifier, ctx.obj["backend"], write_delay_ms=ctx.obj["write_delay_ms"]), False)
+    emit(
+        send(job, identifier, ctx.obj["backend"], write_delay_ms=ctx.obj["write_delay_ms"]), as_json
+    )
 
 
 @cli.command("convert")
@@ -184,9 +218,10 @@ def convert_cmd(ctx, output, **options):
 
 @cli.command("send")
 @click.argument("instructions", type=click.Path(exists=True, dir_okay=False))
+@click.option("--json", "as_json", is_flag=True, help="Emit results and runtime errors as JSON")
 @click.pass_context
-@checked
-def send_cmd(ctx, instructions):
+@checked_print
+def send_cmd(ctx, instructions, as_json):
     """Execute a .niim job; its model must match the connected printer."""
     identifier = printer_id(ctx)
     job = PrintJob.load(instructions)
@@ -194,7 +229,9 @@ def send_cmd(ctx, instructions):
     if ctx.parent.get_parameter_source("model") != click.core.ParameterSource.DEFAULT:
         if ModelsManager().get_model_by_identifier(ctx.obj["model"]).identifier != job.model:
             raise ValueError("Selected model does not match job")
-    emit(send(job, identifier, ctx.obj["backend"], write_delay_ms=ctx.obj["write_delay_ms"]), False)
+    emit(
+        send(job, identifier, ctx.obj["backend"], write_delay_ms=ctx.obj["write_delay_ms"]), as_json
+    )
 
 
 @cli.command()

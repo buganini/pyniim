@@ -8,7 +8,7 @@ from pyniim.backends.bleak import BleakTransport
 from pyniim.backends.helpers import send_async
 from pyniim.conversion import convert
 from pyniim.errors import PrintError, ProtocolError
-from pyniim.protocol import FrameDecoder, Packet
+from pyniim.protocol import FrameDecoder, Packet, parse_print_status
 from pyniim.raster import NiimbotRaster
 
 
@@ -61,6 +61,63 @@ def make_job(copies=1, pages=1):
     return convert(
         NiimbotRaster(), [Image.new("RGB", (12, 12), "black")] * pages, "1x1", copies=copies
     )
+
+
+@pytest.mark.parametrize("length", [4, 8, 10, 11])
+def test_print_status_layouts(length):
+    data = b"\x00\x02\x32\x64" + bytes([0x02]) * (length - 4)
+    state = parse_print_status(data)
+    assert state["pages"] == 2
+    assert state["print_percent"] == 50
+    assert state["feed_percent"] == 100
+    assert state["raw"] == data.hex()
+    assert state["error_code"] == (2 if length == 10 else None)
+
+
+def test_truncated_print_status():
+    with pytest.raises(ProtocolError, match="Truncated print status"):
+        parse_print_status(bytes(3))
+
+
+@pytest.mark.parametrize("code, description", [(2, "out of paper"), (0xFE, "unknown device error")])
+@pytest.mark.parametrize("pages", [1, 2])
+async def test_status_error_overrides_completion_and_preserves_progress(code, description, pages):
+    class ErrorStatusTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            reply = await super().request(command, *args, **kwargs)
+            if command == 0xA3:
+                return Packet(0xB3, reply.data + bytes((0, 0, code, 0, 0, 0)))
+            return reply
+
+    transport = ErrorStatusTransport()
+    async with AsyncPrinter("test", transport=transport) as printer:
+        with pytest.raises(PrintError, match=description) as exc:
+            await printer.send(make_job(pages=pages))
+        result = exc.value.result
+        assert result["outcome"] == "error"
+        assert result["pages_printed"] == 1
+        assert result["did_print"]
+        assert result["instructions_sent"] == (pages == 1)
+        assert result["printer_state"]["error_code"] == code
+        assert not result["ready_for_next_job"]
+        with pytest.raises(ProtocolError):
+            await printer.send(make_job())
+    commands = [command for command, _ in transport.commands]
+    assert commands.count(0x03) == 1
+    assert 0xF3 not in commands
+    assert transport.closed
+
+
+async def test_ten_byte_status_without_error_completes():
+    class ExtendedStatusTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            reply = await super().request(command, *args, **kwargs)
+            return Packet(0xB3, reply.data + bytes(6)) if command == 0xA3 else reply
+
+    async with AsyncPrinter("test", transport=ExtendedStatusTransport()) as printer:
+        result = await printer.send(make_job())
+    assert result["outcome"] == "printed"
+    assert result["printer_state"]["error_code"] == 0
 
 
 async def test_handshake_and_two_page_copies():

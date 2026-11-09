@@ -51,6 +51,19 @@ The default 10 ms delay is a mitigation to test, not a confirmed diagnosis.
 Device error response IDs (`0x00` unsupported, `0xdb` print error) are documented in
 https://github.com/MultiMote/niimbluelib/blob/35110a716c960448ee17a9270e4c3a131149866f/src/packets/commands.ts .
 
+The user subsequently reported successful physical printing on 2026-11-09.
+See [the hardware test record](docs/HARDWARE_TESTING.md) for the scope of that
+evidence and details not yet recorded. The preceding paragraphs document the
+earlier troubleshooting attempts.
+
+Print-status decoding follows `parsePrintStatusResponse` in the pinned
+`packet_parser.ts`: responses have at least four progress bytes; exactly
+10-byte responses carry a printer error at offset 6. Error descriptions use
+the pinned `PrinterErrorCode` enumeration. Unknown error values remain visible
+as numbers, and other response lengths retain their raw data without guessing
+an error-field position. Fault semantics have not yet been exercised on M2_H
+hardware by this project.
+
 ## API design
 
 The module organization and CLI conventions reference:

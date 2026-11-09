@@ -1,2 +1,4 @@
 include THIRD_PARTY.md
+include docs/HARDWARE_TESTING.md
+include examples/test-label.png
 include tools/import_models.py

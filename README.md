@@ -6,7 +6,7 @@ A Python library and CLI for NIIMBOT label printers, starting with **M2_H printi
 
 This project is planned and developed with assistance from **GPT-6 Astra**.
 
-> **Status: 0.1.0a1, experimental.** The Python API, CLI, offline conversion, and M2_H BLE print workflow are implemented and tested with a simulated transport. No model has been verified on real hardware by this project. Of the 77 model records, only the M2_H is enabled for experimental printing; the others are available for reference only.
+> **Status: 0.1.0a1, experimental.** An M2_H user reported successful physical printing over BLE on 2026-11-09 after the connection, acknowledgement, and pacing fixes. This is initial single-label evidence, not a complete hardware qualification; see the [hardware test record](docs/HARDWARE_TESTING.md). Of the 77 model records, only the M2_H is enabled for experimental printing; the others are available for reference only.
 
 ## Installation and quick start
 
@@ -45,7 +45,7 @@ SVG, PDF, HTML, and text layout are not direct inputs in this release. Render th
 
 ## Python API
 
-The following interfaces are implemented. Actual BLE printing still requires M2_H hardware verification.
+The following interfaces are implemented. M2_H printing has an initial user-reported success; broader hardware validation is ongoing.
 
 ### Print an image directly
 
@@ -129,6 +129,15 @@ Results retain the main dictionary fields from `brother_ql.send()` and add `page
 
 Successful BLE writes alone do not establish successful printing. A failure during printing raises `pyniim.errors.PrintError`; its `result` attribute preserves the last known progress. `did_print=True` can mean that only part of the job completed. Check `outcome == "printed"` for whole-job success. Jobs are not automatically resent after a timeout or disconnect, to avoid duplicate labels. A failed session cannot be reused; reconnect with a new session.
 
+The known 10-byte print-status response includes an error code at byte offset 6.
+`printer_state.error_code` is `0` for no reported error, a positive integer for a
+device error, or `None` when the response layout has no decoded error field.
+Nonzero codes stop the job with `outcome="error"`, even if the reported page count
+has reached its target. Common codes have readable descriptions, and unknown
+codes retain their numeric value. Raw status bytes remain available in
+`printer_state.raw`. These protocol meanings come from upstream research;
+individual fault conditions still need M2_H hardware testing.
+
 ## CLI
 
 ```bash
@@ -153,7 +162,23 @@ pyniim -p 'ble://<device-id>' send label.niim
 
 A `.niim` file is a version-1 JSON job containing the model, label dimensions, density, copy count, and Base64-encoded page bitmaps. Files are limited to 32 MiB. Loading validates the format version, pixel dimensions, and data lengths. These files are neither Brother instruction files nor packet captures that can be written directly to BLE.
 
-Supported environment variables are `PYNIIM_BACKEND`, `PYNIIM_MODEL`, `PYNIIM_PRINTER`, and `PYNIIM_LABEL`. The CLI also supports `--debug` and `--json` output for query commands.
+Supported environment variables are `PYNIIM_BACKEND`, `PYNIIM_MODEL`, `PYNIIM_PRINTER`, and `PYNIIM_LABEL`. The CLI supports `--debug` and `--json` output for query commands, `print`, and `send`.
+
+### Scriptable print results
+
+```bash
+pyniim -m M2_H -p 'ble://<device-id>' \
+  print --json -l 40x30 examples/test-label.png
+pyniim -p 'ble://<device-id>' send --json label.niim
+```
+
+With `--json`, stdout contains one JSON object. Success returns the API result
+fields and exit code 0. A print failure preserves those fields, adds an `error`
+message, and exits with code 1. A connection or conversion failure before print
+progress is available returns only `outcome="error"` and `error`. Argument parsing
+errors (such as missing files or invalid options) still use Click's stderr output
+and exit code 2. Debug logs go to stderr. Without `--json`, print failures include
+the outcome and last reported page count in the error message.
 
 ### Debugging a stalled print
 
@@ -170,8 +195,9 @@ BLE writes without response are paced with a **10 ms delay after every chunk**,
 including the final image chunk before PageEnd. `--write-delay-ms 25` allows a
 slower diagnostic run; `0` disables pacing. Python callers can set
 `write_delay_ms` on `Printer`, `AsyncPrinter`, `send()`, or `send_async()`.
-Pacing is intended to reduce device buffer overruns; its effectiveness on this
-M2_H implementation still requires hardware confirmation.
+Pacing is intended to reduce device buffer overruns. The user reported successful
+printing after these fixes, but the successful run's exact pacing setting was
+not recorded, so the cause of the earlier stall is not established.
 
 If PageEnd stalls, the error names the `0xe3` request and expected `0xe4` reply.
 An upload-complete log means bytes were submitted to BLE, not that the printer
@@ -199,14 +225,14 @@ The catalog imports 77 specification records from [niimbluelib's model data](htt
 
 | Priority | Models | Current status |
 | --- | --- | --- |
-| Primary | M2_H (`M2-H` alias accepted) | Bleak workflow implemented; experimental, not hardware verified |
+| Primary | M2_H (`M2-H` alias accepted) | Experimental; single-label BLE success reported by a user |
 | Next | B1, B21, D11, D110 | Catalog only; printing disabled |
 | Next | B1_PRO, B2_PRO, B21_PRO, D11_H, D110_M | Catalog only; printing disabled |
 | Other | Remaining NIIMBOT models in the catalog | Catalog only; printing disabled |
 
-`info models` currently uses the `catalog-only` and `experimental` support markers. Hardware verification will be recorded only after actual testing, together with the transport, firmware, operating system, media, and results. Unknown models and unimplemented protocols do not automatically fall back to M2_H settings.
+`info models` uses the `catalog-only` and `experimental` support markers. The initial M2_H success and missing test details are recorded in [docs/HARDWARE_TESTING.md](docs/HARDWARE_TESTING.md). Firmware, operating system, media, and measured results should accompany future records. Unknown models and unimplemented protocols do not automatically fall back to M2_H settings.
 
-Published M2_H information lists model ID 4608 and 300 DPI. Sources disagree on printhead width: the [community wiki](https://printers.niim.blue/hardware/niimbot-m2h/) lists 576 px, while [another BLE implementation](https://github.com/iscarelli/niimbot-web-bluetooth/blob/main/docs/protocol-v4.md) uses 567 px. The catalog retains upstream specifications, while printing is conservatively limited to 567 px. This discrepancy still requires physical boundary testing. Calibrated centering offsets and margins are not provided yet.
+Published M2_H information lists model ID 4608 and 300 DPI. The [community wiki](https://printers.niim.blue/hardware/niimbot-m2h/) lists a 576 px printhead; [another BLE implementation's hardware notes](https://github.com/iscarelli/niimbot-web-bluetooth/blob/main/docs/NOTES.md#m2-h-first-real-capture-2026-08-13) describe using 567 px to leave a ribbon margin. The catalog retains upstream specifications, while printing remains conservatively limited to 567 px. Usable boundaries still require physical testing here. Calibrated centering offsets and margins are not provided yet.
 
 ## BLE and internal architecture
 
@@ -243,6 +269,12 @@ python -m build
 
 Unit tests do not scan for or connect to real devices. They cover image inputs, bitmap polarity and bit order, job validation, offline CLI conversion, fragmented packets, chunked writes, model mismatches, timeouts, disconnections, and delayed responses.
 
+[GitHub Actions](.github/workflows/ci.yml) runs the simulated tests on Linux,
+macOS, and Windows with Python 3.11 and 3.14. A separate job checks Ruff, builds
+the source distribution and wheel, and exercises the installed wheel's offline
+CLI in a clean environment. These checks do not establish BLE hardware support
+on those platforms.
+
 Model data is pinned to niimbluelib revision `35110a716c960448ee17a9270e4c3a131149866f`. To update it, download `src/printer_models.ts` and `LICENSE` from the chosen revision, then run:
 
 ```bash
@@ -251,13 +283,13 @@ python tools/import_models.py /path/to/printer_models.ts <revision> /path/to/LIC
 
 ## Remaining validation
 
-1. Scan, connect, identify, and capture heartbeat data on a physical M2_H.
-2. Print single labels, multiple copies, and multiple pages; measure orientation, dimensions, and boundaries, and verify completion reporting.
+1. Record a reproducible successful M2_H run with firmware, runtime versions, settings, and completion logs.
+2. Test multiple copies and multiple pages; measure orientation, dimensions, and boundaries, and verify completion reporting.
 3. Test out-of-paper conditions, open lids, ribbon problems, and disconnections during printing.
 4. Verify BLE compatibility on macOS, Linux, and Windows.
 5. Expand model and media support based on hardware evidence.
 
-The first hardware acceptance milestone is to print an image at the specified dimensions on M2_H through Bleak, confirm completion or report failure, and use the same print workflow from both the API and CLI.
+The first user-reported physical print is complete. The next hardware milestone is a reproducible run with measured output and confirmed completion reporting, followed by copies, multiple pages, and fault testing through both the API and CLI.
 
 ## References
 

@@ -1,10 +1,10 @@
-"""Experimental M2_H b1 task. No hardware validation has been performed here."""
+"""Experimental M2_H b1 task; see docs/HARDWARE_TESTING.md for hardware evidence."""
 
 import asyncio
 import logging
 
-from .errors import PrintError, ProtocolError
-from .protocol import row_packets
+from .errors import PrinterError, PrintError, ProtocolError
+from .protocol import parse_print_status, row_packets
 
 logger = logging.getLogger(__name__)
 
@@ -117,19 +117,13 @@ async def print_job(transport, job, *, timeout=60.0):
             async with asyncio.timeout(timeout):
                 while True:
                     reply = await transport.request(0xA3, response=0xB3)
-                    if len(reply.data) < 4:
-                        raise ProtocolError("Truncated print status")
-                    count = int.from_bytes(reply.data[:2], "big")
+                    state = parse_print_status(reply.data)
+                    result["printer_state"] = state
+                    count = state["pages"]
                     if count > total:
                         raise ProtocolError(
                             "Unexpected print counter; completion cannot be confirmed"
                         )
-                    result["printer_state"] = dict(
-                        pages=count,
-                        print_percent=reply.data[2],
-                        feed_percent=reply.data[3],
-                        raw=reply.data.hex(),
-                    )
                     result["pages_printed"] = count
                     result["did_print"] = count > 0
                     logger.debug(
@@ -140,6 +134,8 @@ async def print_job(transport, job, *, timeout=60.0):
                         reply.data[3],
                         reply.data.hex(" "),
                     )
+                    if state["error_code"]:
+                        raise PrinterError(state["error_code"])
                     if count >= target:
                         break
                     await asyncio.sleep(0.25)
@@ -151,7 +147,7 @@ async def print_job(transport, job, *, timeout=60.0):
         return result
     except (Exception, asyncio.CancelledError) as exc:
         # Do not blindly retry or send PrintEnd on a timeout: either can spoil labels.
-        result["outcome"] = "unknown" if started else "error"
+        result["outcome"] = "error" if isinstance(exc, PrinterError) or not started else "unknown"
         if isinstance(exc, asyncio.CancelledError):
             raise
         detail = str(exc) or (
