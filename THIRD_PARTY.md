@@ -42,6 +42,15 @@ is not interpreted, and other commands retain their existing validation. This
 is a hardware-observed response variant, not evidence of completed printing;
 completion still requires the print-status counter and PrintEnd acknowledgement.
 
+A subsequent user log shows valid outgoing frames covering rows 0–353 followed
+by PageEnd (`0xe3`), with no completion or response payload recorded. It does not
+establish that the printer received all rows. Pacing is informed by niimbluelib's
+10 ms packet interval and the write-without-response discussion in
+https://github.com/iscarelli/niimbot-web-bluetooth/blob/main/src/niimbot.js .
+The default 10 ms delay is a mitigation to test, not a confirmed diagnosis.
+Device error response IDs (`0x00` unsupported, `0xdb` print error) are documented in
+https://github.com/MultiMote/niimbluelib/blob/35110a716c960448ee17a9270e4c3a131149866f/src/packets/commands.ts .
+
 ## API design
 
 The module organization and CLI conventions reference:

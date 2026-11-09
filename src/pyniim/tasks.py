@@ -1,9 +1,12 @@
 """Experimental M2_H b1 task. No hardware validation has been performed here."""
 
 import asyncio
+import logging
 
 from .errors import PrintError, ProtocolError
 from .protocol import row_packets
+
+logger = logging.getLogger(__name__)
 
 
 async def ack(transport, command, data=b"\x01", *, response, timeout=None):
@@ -16,6 +19,7 @@ async def ack(transport, command, data=b"\x01", *, response, timeout=None):
 
 
 async def identify(transport):
+    logger.debug("Starting printer identification")
     await ack_connect(transport)
     status = await transport.request(0xA5, response=0xB5)
     info = {}
@@ -26,6 +30,7 @@ async def identify(transport):
     if len(raw_id) not in (1, 2):
         raise ProtocolError("Invalid printer model ID response")
     model_id = int.from_bytes(raw_id.ljust(2, b"\x00"), "big")
+    logger.debug("Printer model ID: %d; status data: %s", model_id, status.data.hex())
     heartbeat = await transport.request(0xDC, b"\x04", response=(0xD9, 0xDD, 0xDE, 0xDF))
     return dict(
         model_id=model_id,
@@ -60,26 +65,54 @@ async def print_job(transport, job, *, timeout=60.0):
     )
     total = len(job.pages) * job.copies
     started = False
+    stage = "setting density"
+    logger.debug(
+        "Starting job: model=%s pages=%d copies=%d total=%d",
+        job.model,
+        len(job.pages),
+        job.copies,
+        total,
+    )
     try:
         await ack(transport, 0x21, bytes((job.density,)), response=0x31)
+        stage = "setting label type"
         await ack(transport, 0x23, bytes((job.label_type,)), response=0x33)
+        stage = "starting print job (0x01)"
         started = True  # An unacknowledged start can already have changed the device state.
         await ack(transport, 0x01, total.to_bytes(2, "big") + bytes(5), response=0x02)
         target = 0
         for index, page in enumerate(job.pages):
+            stage = f"opening page {index + 1} (0x03)"
+            logger.debug(
+                "Page %d/%d: %dx%d pixels", index + 1, len(job.pages), page.width, page.height
+            )
             await ack(transport, 0x03, response=0x04)
             size = (
                 page.height.to_bytes(2, "big")
                 + page.width.to_bytes(2, "big")
                 + job.copies.to_bytes(2, "big")
             )
+            stage = f"setting page {index + 1} size (0x13)"
             await ack(transport, 0x13, size, response=0x14)
+            stage = f"uploading page {index + 1} rows"
+            packet_count = 0
             for packet in row_packets(page):
                 await transport.write(packet.encode())
+                packet_count += 1
+                if packet_count % 25 == 0:
+                    logger.debug("Page %d upload: %d row packets sent", index + 1, packet_count)
+            logger.debug(
+                "Page %d upload complete: %d rows in %d packets; awaiting PageEnd ACK",
+                index + 1,
+                page.height,
+                packet_count,
+            )
+            stage = f"waiting for page {index + 1} PageEnd acknowledgement (0xe3 -> 0xe4)"
             await ack(transport, 0xE3, response=0xE4, timeout=timeout)
             if index == len(job.pages) - 1:
                 result.update(instructions_sent=True, outcome="sent")
             target += job.copies
+            stage = f"waiting for printed-page counter to reach {target} (0xa3 -> 0xb3)"
             # Wait after every uploaded page to avoid overrunning device storage.
             async with asyncio.timeout(timeout):
                 while True:
@@ -99,16 +132,29 @@ async def print_job(transport, job, *, timeout=60.0):
                     )
                     result["pages_printed"] = count
                     result["did_print"] = count > 0
+                    logger.debug(
+                        "Print progress: pages=%d/%d print=%d%% feed=%d%% raw=%s",
+                        count,
+                        total,
+                        reply.data[2],
+                        reply.data[3],
+                        reply.data.hex(" "),
+                    )
                     if count >= target:
                         break
                     await asyncio.sleep(0.25)
         # Never end a job while its physical printing remains unconfirmed.
+        stage = "ending print job (0xf3 -> 0xf4)"
         await ack(transport, 0xF3, response=0xF4)
         result.update(outcome="printed", ready_for_next_job=True)
+        logger.debug("Print job completed: %d pages", total)
         return result
     except (Exception, asyncio.CancelledError) as exc:
         # Do not blindly retry or send PrintEnd on a timeout: either can spoil labels.
         result["outcome"] = "unknown" if started else "error"
         if isinstance(exc, asyncio.CancelledError):
             raise
-        raise PrintError(f"Print failed or is uncertain: {exc}", result) from exc
+        detail = str(exc) or (
+            f"timed out after {timeout:g}s" if isinstance(exc, TimeoutError) else type(exc).__name__
+        )
+        raise PrintError(f"Print failed or is uncertain while {stage}: {detail}", result) from exc

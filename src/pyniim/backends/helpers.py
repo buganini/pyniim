@@ -22,21 +22,42 @@ def discover(backend_identifier="bleak", *, timeout=5.0):
 
 
 async def send_async(
-    instructions, printer_identifier=None, backend_identifier=None, blocking=True, *, timeout=60.0
+    instructions,
+    printer_identifier=None,
+    backend_identifier=None,
+    blocking=True,
+    *,
+    timeout=60.0,
+    write_delay_ms=10.0,
 ):
     check_backend(backend_identifier)
     require_blocking(blocking)
     instructions.validate()
     if not printer_identifier:
         raise ValueError("printer_identifier is required")
-    async with AsyncPrinter(printer_identifier, instructions.model, timeout=timeout) as printer:
+    async with AsyncPrinter(
+        printer_identifier, instructions.model, timeout=timeout, write_delay_ms=write_delay_ms
+    ) as printer:
         return await printer.send(instructions)
 
 
 def send(
-    instructions, printer_identifier=None, backend_identifier=None, blocking=True, *, timeout=60.0
+    instructions,
+    printer_identifier=None,
+    backend_identifier=None,
+    blocking=True,
+    *,
+    timeout=60.0,
+    write_delay_ms=10.0,
 ):
     ensure_sync_context()
     return asyncio.run(
-        send_async(instructions, printer_identifier, backend_identifier, blocking, timeout=timeout)
+        send_async(
+            instructions,
+            printer_identifier,
+            backend_identifier,
+            blocking,
+            timeout=timeout,
+            write_delay_ms=write_delay_ms,
+        )
     )

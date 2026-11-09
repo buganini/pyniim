@@ -345,3 +345,100 @@ async def test_page_size_ack_variant_does_not_relax_other_commands(command):
 
     with pytest.raises(ProtocolError, match="rejected: 0100"):
         await ack(Transport(), command, response=command + 1)
+
+
+@pytest.mark.parametrize("delay", [0, 10, 25])
+async def test_ble_writes_are_paced_between_chunks_and_frames(monkeypatch, delay):
+    events = []
+
+    class Client:
+        is_connected = True
+
+        async def write_gatt_char(self, characteristic, raw, response):
+            events.append(("write", raw))
+
+    async def sleep(seconds):
+        events.append(("sleep", seconds))
+
+    monkeypatch.setattr("pyniim.backends.bleak.asyncio.sleep", sleep)
+    transport = BleakTransport("test", write_delay_ms=delay)
+    transport.client = Client()
+    transport.characteristic = FakeCharacteristic()
+    first = Packet(0x84, b"\x00\x00\x01").encode()
+    second = Packet(0xE3, b"\x01").encode()
+    await transport.write(first)
+    await transport.write(second)
+    chunks = [first[:5], first[5:], second[:5], second[5:]]
+    expected = []
+    for chunk in chunks:
+        expected.append(("write", chunk))
+        if delay:
+            expected.append(("sleep", delay / 1000))
+    assert events == expected
+
+
+@pytest.mark.parametrize("delay", [-1, float("nan"), float("inf")])
+def test_invalid_write_delays_rejected(delay):
+    with pytest.raises(ValueError, match="Write delay"):
+        BleakTransport("test", write_delay_ms=delay)
+
+
+async def test_page_end_timeout_names_command_and_expected_response(caplog):
+    caplog.set_level("DEBUG", logger="pyniim")
+    transport = BleakTransport("test", timeout=0.005, write_delay_ms=0)
+    transport.characteristic = FakeCharacteristic()
+    transport.client = FakeClient(transport, respond=False)
+    with pytest.raises(TimeoutError, match="0xe3.*0xe4"):
+        await transport.request(0xE3, response=0xE4)
+    assert "TX cmd=0xe3" in caplog.text
+    assert "Timed out after" in caplog.text
+    assert transport.failure is not None
+
+
+async def test_protocol_logs_include_response_payload(caplog):
+    caplog.set_level("DEBUG", logger="pyniim")
+    transport = BleakTransport("test", write_delay_ms=0)
+    transport.characteristic = FakeCharacteristic()
+    transport.client = FakeClient(transport)
+    await transport.request(0x21, response=0x31)
+    assert "TX cmd=0x21 data=01" in caplog.text
+    assert "RX cmd=0x31 data=01" in caplog.text
+
+
+@pytest.mark.parametrize("command", [0x00, 0xDB])
+async def test_unsolicited_error_between_writes_stops_upload(command):
+    transport = BleakTransport("test", write_delay_ms=0)
+    transport.characteristic = FakeCharacteristic()
+    transport.client = FakeClient(transport, respond=False)
+    transport._notify(None, Packet(command, b"\x02").encode())
+    with pytest.raises(ProtocolError, match=f"0x{command:02x}"):
+        await transport.write(Packet(0x84, b"\x00\x00\x01").encode())
+    assert transport.client.writes == []
+
+
+async def test_error_during_chunked_write_stops_remaining_chunks():
+    transport = BleakTransport("test", write_delay_ms=0)
+    transport.characteristic = FakeCharacteristic()
+
+    class ErrorClient(FakeClient):
+        async def write_gatt_char(self, characteristic, raw, response):
+            self.writes.append(raw)
+            transport._notify(None, Packet(0xDB, b"\x02").encode())
+
+    transport.client = ErrorClient(transport)
+    with pytest.raises(ProtocolError, match="printer error"):
+        await transport.request(0x21, response=0x31)
+    assert len(transport.client.writes) == 1
+    assert transport.pending is None
+
+
+async def test_empty_timeout_has_page_end_context():
+    class EmptyTimeoutTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            if command == 0xE3:
+                raise TimeoutError()
+            return await super().request(command, *args, **kwargs)
+
+    async with AsyncPrinter("test", transport=EmptyTimeoutTransport()) as printer:
+        with pytest.raises(PrintError, match="PageEnd.*0xe3 -> 0xe4.*timed out"):
+            await printer.send(make_job())

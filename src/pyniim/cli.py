@@ -52,13 +52,25 @@ def printer_id(ctx):
 )
 @click.option("-m", "--model", default="M2_H", envvar="PYNIIM_MODEL")
 @click.option("-p", "--printer", envvar="PYNIIM_PRINTER")
-@click.option("--debug", is_flag=True)
+@click.option("--debug", is_flag=True, help="Log protocol TX/RX and print stages")
+@click.option("--bleak-debug", is_flag=True, help="Also log low-level Bleak activity")
+@click.option(
+    "--write-delay-ms",
+    type=click.FloatRange(min=0),
+    default=10.0,
+    show_default=True,
+    help="Delay after each BLE write; 0 disables pacing",
+)
 @click.version_option(__version__)
 @click.pass_context
-def cli(ctx, backend, model, printer, debug):
+def cli(ctx, backend, model, printer, debug, bleak_debug, write_delay_ms):
     """Experimental NIIMBOT BLE printing; M2_H only, not hardware verified."""
-    ctx.obj = dict(backend=backend, model=model, printer=printer)
-    logging.basicConfig(level=logging.DEBUG if debug else logging.WARNING)
+    ctx.obj = dict(backend=backend, model=model, printer=printer, write_delay_ms=write_delay_ms)
+    logging.basicConfig(
+        level=logging.WARNING, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+    )
+    logging.getLogger("pyniim").setLevel(logging.DEBUG if debug or bleak_debug else logging.WARNING)
+    logging.getLogger("bleak").setLevel(logging.DEBUG if bleak_debug else logging.WARNING)
 
 
 @cli.command()
@@ -155,7 +167,7 @@ def print_cmd(ctx, **options):
     """Convert images and wait for confirmed printing."""
     identifier = printer_id(ctx)
     job = make_job(ctx, **options)
-    emit(send(job, identifier, ctx.obj["backend"]), False)
+    emit(send(job, identifier, ctx.obj["backend"], write_delay_ms=ctx.obj["write_delay_ms"]), False)
 
 
 @cli.command("convert")
@@ -182,7 +194,7 @@ def send_cmd(ctx, instructions):
     if ctx.parent.get_parameter_source("model") != click.core.ParameterSource.DEFAULT:
         if ModelsManager().get_model_by_identifier(ctx.obj["model"]).identifier != job.model:
             raise ValueError("Selected model does not match job")
-    emit(send(job, identifier, ctx.obj["backend"]), False)
+    emit(send(job, identifier, ctx.obj["backend"], write_delay_ms=ctx.obj["write_delay_ms"]), False)
 
 
 @cli.command()
@@ -219,5 +231,7 @@ def analyze(instructions, output_dir, as_json):
 @checked
 def status(ctx, as_json):
     """Read raw heartbeat data; M2_H consumable semantics remain unverified."""
-    with Printer(printer_id(ctx), model=ctx.obj["model"]) as printer:
+    with Printer(
+        printer_id(ctx), model=ctx.obj["model"], write_delay_ms=ctx.obj["write_delay_ms"]
+    ) as printer:
         emit(printer.status(), as_json)

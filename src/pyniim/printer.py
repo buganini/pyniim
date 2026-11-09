@@ -22,12 +22,18 @@ def ensure_sync_context():
 
 
 class AsyncPrinter:
-    def __init__(self, identifier, model="M2_H", *, timeout=60.0, transport=None):
+    def __init__(
+        self, identifier, model="M2_H", *, timeout=60.0, write_delay_ms=10.0, transport=None
+    ):
         if timeout <= 0:
             raise ValueError("Timeout must be positive")
         self.model = ModelsManager().get_model_by_identifier(model)
         self.model.require_print_support()
-        self.transport = transport if transport is not None else BleakTransport(identifier)
+        self.transport = (
+            transport
+            if transport is not None
+            else BleakTransport(identifier, write_delay_ms=write_delay_ms)
+        )
         self.timeout = timeout
         self.info = None
         self.opened = False

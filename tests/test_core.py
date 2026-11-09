@@ -126,3 +126,28 @@ def test_cli_offline_pipeline(tmp_path):
     result = runner.invoke(cli, ["send", str(job)])
     assert result.exit_code != 0
     assert "--printer" in result.output
+
+
+@pytest.mark.parametrize("command", ["print", "send"])
+def test_cli_passes_write_delay_to_transport(monkeypatch, tmp_path, command):
+    import importlib
+
+    module = importlib.import_module("pyniim.cli")
+    calls = []
+
+    def send(job, identifier, backend, **options):
+        calls.append((identifier, backend, options))
+        return {"outcome": "printed"}
+
+    monkeypatch.setattr(module, "send", send)
+    if command == "print":
+        path = tmp_path / "image.png"
+        Image.new("RGB", (12, 12), "black").save(path)
+        args = ["print", "-l", "1x1", str(path)]
+    else:
+        path = tmp_path / "job.niim"
+        image_job().save(path)
+        args = ["send", str(path)]
+    result = CliRunner().invoke(cli, ["--write-delay-ms", "25", "-p", "ble://test", *args])
+    assert result.exit_code == 0, result.output
+    assert calls == [("ble://test", "bleak", {"write_delay_ms": 25.0})]

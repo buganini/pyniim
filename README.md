@@ -155,6 +155,29 @@ A `.niim` file is a version-1 JSON job containing the model, label dimensions, d
 
 Supported environment variables are `PYNIIM_BACKEND`, `PYNIIM_MODEL`, `PYNIIM_PRINTER`, and `PYNIIM_LABEL`. The CLI also supports `--debug` and `--json` output for query commands.
 
+### Debugging a stalled print
+
+`--debug` logs timestamped protocol requests, received payloads, upload progress,
+and completion polling. Add `--bleak-debug` to include low-level Bleak logs.
+These are global options and belong before the subcommand:
+
+```bash
+pyniim --debug --write-delay-ms 10 -m M2_H -p 'ble://<device-id>' \
+  print -l 40x30 examples/test-label.png 2>&1 | tee /tmp/pyniim-debug.log
+```
+
+BLE writes without response are paced with a **10 ms delay after every chunk**,
+including the final image chunk before PageEnd. `--write-delay-ms 25` allows a
+slower diagnostic run; `0` disables pacing. Python callers can set
+`write_delay_ms` on `Printer`, `AsyncPrinter`, `send()`, or `send_async()`.
+Pacing is intended to reduce device buffer overruns; its effectiveness on this
+M2_H implementation still requires hardware confirmation.
+
+If PageEnd stalls, the error names the `0xe3` request and expected `0xe4` reply.
+An upload-complete log means bytes were submitted to BLE, not that the printer
+received or printed every row. A timeout does not automatically retry or send
+PrintEnd. Device error notifications received during uploads also stop the job.
+
 ## Comparison with brother_ql
 
 | brother_ql | pyniim |
@@ -187,7 +210,7 @@ Published M2_H information lists model ID 4608 and 300 DPI. Sources disagree on 
 
 ## BLE and internal architecture
 
-The Bleak backend scans for a `BLEDevice`, connects, checks the service and characteristic, subscribes to notifications, and then performs identification and print commands. Writes are split according to the characteristic's capacity. The receiver handles both fragmented notifications and multiple packets in a single notification.
+The Bleak backend scans for a `BLEDevice`, connects, checks the service and characteristic, subscribes to notifications, and then performs identification and print commands. Writes are split according to the characteristic's capacity and paced between chunks. The receiver handles both fragmented notifications and multiple packets in a single notification.
 
 `ble://<device-id>` uses the identifier returned by discovery. On macOS, this is typically a device UUID; it is not assumed to be a MAC address. See the [Bleak documentation](https://bleak.readthedocs.io/en/latest/api/client.html).
 
