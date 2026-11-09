@@ -242,3 +242,54 @@ async def test_multiple_jobs_share_a_session():
         assert first["pages_printed"] == 2
         assert second["pages_printed"] == 1
     assert sum(cmd == 0xC1 for cmd, _ in transport.commands) == 1
+
+
+@pytest.mark.parametrize("payload", [b"\x01", b"\x02", b"\x03", b"\x03\x00"])
+async def test_connection_success_variants_complete_identification(payload):
+    class ConnectTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            packet = await super().request(command, *args, **kwargs)
+            if command == 0xC1:
+                assert kwargs["prefix"] == b"\x03"
+                return Packet(0xC2, payload)
+            return packet
+
+    transport = ConnectTransport()
+    async with AsyncPrinter("test", transport=transport) as printer:
+        assert printer.info["model_id"] == 4608
+        assert (await printer.send(make_job()))["outcome"] == "printed"
+    assert transport.closed
+
+
+@pytest.mark.parametrize(
+    "payload, message",
+    [
+        (b"", "Empty"),
+        (b"\x00", "disconnected"),
+        (b"\x5a", "firmware errors"),
+        (b"\xff", "unknown result"),
+    ],
+)
+async def test_invalid_connection_result_closes_session(payload, message):
+    class ConnectTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            packet = await super().request(command, *args, **kwargs)
+            return Packet(0xC2, payload) if command == 0xC1 else packet
+
+    transport = ConnectTransport()
+    with pytest.raises(ProtocolError, match=message):
+        async with AsyncPrinter("test", transport=transport):
+            pass
+    assert transport.closed
+    assert [command for command, _ in transport.commands] == [0xC1]
+
+
+async def test_connect_success_code_is_not_a_print_command_ack():
+    class BadAckTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            packet = await super().request(command, *args, **kwargs)
+            return Packet(packet.command, b"\x03") if command == 0x21 else packet
+
+    async with AsyncPrinter("test", transport=BadAckTransport()) as printer:
+        with pytest.raises(PrintError, match="Command 0x21 rejected: 03"):
+            await printer.send(make_job())

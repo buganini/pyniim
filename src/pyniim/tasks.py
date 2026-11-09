@@ -34,8 +34,15 @@ async def identify(transport):
 
 async def ack_connect(transport):
     reply = await transport.request(0xC1, response=0xC2, prefix=b"\x03")
-    if reply.data != b"\x01":
-        raise ProtocolError(f"Printer refused connection: {reply.data.hex()}")
+    # ConnectResult is an enum, not the boolean ACK used by print commands.
+    # niimbluelib: Connected=1, ConnectedNew=2, ConnectedV3=3.
+    # Its parser reads the first byte and permits additional payload bytes.
+    if not reply.data:
+        raise ProtocolError("Empty printer connection response")
+    result = reply.data[0]
+    if result not in (1, 2, 3):
+        reason = {0: "disconnected", 90: "firmware errors"}.get(result, "unknown result")
+        raise ProtocolError(f"Printer refused connection: {reply.data.hex()} ({reason})")
 
 
 async def print_job(transport, job, *, timeout=60.0):
