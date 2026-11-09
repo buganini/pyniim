@@ -7,6 +7,8 @@ name = "pyniim"
 version = "0.1.0a1"
 description = "Experimental NIIMBOT M2_H BLE printing with a brother_ql-inspired API"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "src/pyniim/data/niimbluelib-LICENSE.txt"]
 requires-python = ">=3.11"
 dependencies = ["bleak>=0.22,<4", "Pillow>=10,<14", "click>=8.1,<9"]
 

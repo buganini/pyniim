@@ -299,4 +299,4 @@ The first user-reported physical print is complete. The next hardware milestone 
 - [niimbot-web-bluetooth](https://github.com/iscarelli/niimbot-web-bluetooth): BLE print workflows and model validation reference.
 - [Bleak](https://github.com/hbldh/bleak): Python BLE communication.
 
-A license for this project's own code has not been selected yet. Model data comes from MIT-licensed niimbluelib; its full license is distributed in `src/pyniim/data/niimbluelib-LICENSE.txt`. The Brother API is used as an interface design reference. See [THIRD_PARTY.md](THIRD_PARTY.md) for protocol research sources and attribution.
+This project is licensed under the [MIT License](LICENSE). Model data comes from MIT-licensed niimbluelib; its original copyright notice and full license are distributed in `src/pyniim/data/niimbluelib-LICENSE.txt`. The Brother API is used as an interface design reference. See [THIRD_PARTY.md](THIRD_PARTY.md) for protocol research sources and attribution.
