@@ -8,7 +8,10 @@ from .protocol import row_packets
 
 async def ack(transport, command, data=b"\x01", *, response, timeout=None):
     reply = await transport.request(command, data, response=response, timeout=timeout)
-    if reply.data != b"\x01":
+    # M2_H reports 01 00 for SetPageSize. Keep this observed variant local
+    # to that command; the trailing byte's meaning is not yet established.
+    accepted = (b"\x01", b"\x01\x00") if command == 0x13 else (b"\x01",)
+    if reply.data not in accepted:
         raise ProtocolError(f"Command 0x{command:02x} rejected: {reply.data.hex()}")
 
 

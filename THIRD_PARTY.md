@@ -35,6 +35,13 @@ This differs from the boolean ACK expected for print commands. An M2_H user
 reported response `03`; this confirms that response occurs on hardware, not that
 the complete print workflow has been verified.
 
+The same user subsequently reported payload `01 00` for the M2_H SetPageSize
+response (`0x13` request, `0x14` response). The implementation accepts this exact
+variant alongside the single-byte `01` ACK for SetPageSize only. The second byte
+is not interpreted, and other commands retain their existing validation. This
+is a hardware-observed response variant, not evidence of completed printing;
+completion still requires the print-status counter and PrintEnd acknowledgement.
+
 ## API design
 
 The module organization and CLI conventions reference:

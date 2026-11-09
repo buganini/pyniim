@@ -293,3 +293,55 @@ async def test_connect_success_code_is_not_a_print_command_ack():
     async with AsyncPrinter("test", transport=BadAckTransport()) as printer:
         with pytest.raises(PrintError, match="Command 0x21 rejected: 03"):
             await printer.send(make_job())
+
+
+async def test_m2h_connect03_and_page_size0100_reach_print_completion():
+    class M2HTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            packet = await super().request(command, *args, **kwargs)
+            if command == 0xC1:
+                return Packet(0xC2, b"\x03")
+            if command == 0x13:
+                # Framed representation of the user's reported 0x14 payload 01 00.
+                raw = bytes.fromhex("55551402010017aaaa")
+                decoder = FrameDecoder()
+                assert decoder.feed(raw[:5]) == []
+                return decoder.feed(raw[5:])[0]
+            return packet
+
+    transport = M2HTransport()
+    async with AsyncPrinter("test", transport=transport) as printer:
+        result = await printer.send(make_job())
+    assert result["outcome"] == "printed"
+    commands = [cmd for cmd, _ in transport.commands]
+    assert commands.index(0x13) < commands.index(0x85) < commands.index(0xE3)
+    assert commands[-2:] == [0xA3, 0xF3]
+    assert transport.closed
+
+
+@pytest.mark.parametrize("payload", [b"", b"\x00", b"\x00\x00", b"\x01\x01", b"\x01\x00\x00"])
+async def test_unrecognized_page_size_ack_does_not_upload_rows(payload):
+    class BadSizeTransport(FakeTransport):
+        async def request(self, command, *args, **kwargs):
+            packet = await super().request(command, *args, **kwargs)
+            return Packet(0x14, payload) if command == 0x13 else packet
+
+    transport = BadSizeTransport()
+    async with AsyncPrinter("test", transport=transport) as printer:
+        with pytest.raises(PrintError, match="Command 0x13 rejected") as exc:
+            await printer.send(make_job())
+        assert not exc.value.result["did_print"]
+        assert not exc.value.result["instructions_sent"]
+    assert not any(cmd in (0x84, 0x85, 0xE3, 0xF3) for cmd, _ in transport.commands)
+
+
+@pytest.mark.parametrize("command", [0x21, 0x23, 0x01, 0x03, 0xE3, 0xF3])
+async def test_page_size_ack_variant_does_not_relax_other_commands(command):
+    from pyniim.tasks import ack
+
+    class Transport:
+        async def request(self, *args, **kwargs):
+            return Packet(kwargs["response"], b"\x01\x00")
+
+    with pytest.raises(ProtocolError, match="rejected: 0100"):
+        await ack(Transport(), command, response=command + 1)
