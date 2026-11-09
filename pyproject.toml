@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyniim"
+version = "0.1.0a1"
+description = "Experimental NIIMBOT M2_H BLE printing with a brother_ql-inspired API"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["bleak>=0.22,<4", "Pillow>=10,<14", "click>=8.1,<9"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.9", "build>=1"]
+
+[project.scripts]
+pyniim = "pyniim.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pyniim = ["data/*.json", "data/*.txt"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

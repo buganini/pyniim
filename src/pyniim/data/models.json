@@ -1,0 +1,1317 @@
+{
+  "source": "https://github.com/MultiMote/niimbluelib",
+  "revision": "35110a716c960448ee17a9270e4c3a131149866f",
+  "models": [
+    {
+      "identifier": "A1_PRO",
+      "ids": [
+        7424
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 296,
+      "paper_types": [
+        "Perforated",
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "A20",
+      "ids": [
+        2817
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 400,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "A203",
+      "ids": [
+        2818
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 400,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "A63",
+      "ids": [
+        2054
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "Black"
+      ],
+      "density_min": 1,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "A8",
+      "ids": [
+        256
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "Black",
+        "WithGaps",
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "A8_P",
+      "ids": [
+        273
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B1",
+      "ids": [
+        4096
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B1_PRO",
+      "ids": [
+        4097
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 567,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B1_SE",
+      "ids": [
+        4098
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B11",
+      "ids": [
+        51457
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated",
+        "Transparent"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "B16",
+      "ids": [
+        1792
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "B18",
+      "ids": [
+        3584
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "BlackMarkGap",
+        "HeatShrinkTube",
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "B18S",
+      "ids": [
+        3585
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "BlackMarkGap",
+        "HeatShrinkTube",
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "B2",
+      "ids": [
+        6913
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B2_PRO",
+      "ids": [
+        6912
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 567,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B203",
+      "ids": [
+        2816
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 400,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B21",
+      "ids": [
+        768
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B21_PRO",
+      "ids": [
+        785
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 591,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B21_C2B",
+      "ids": [
+        771,
+        775
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Continuous",
+        "Transparent",
+        "Black"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B21_L2B",
+      "ids": [
+        769
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B21S",
+      "ids": [
+        777
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B21S_C2B",
+      "ids": [
+        776
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B3",
+      "ids": [
+        52993
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 600,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B31",
+      "ids": [
+        5632
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 600,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B32",
+      "ids": [
+        2049
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "B32R",
+      "ids": [
+        2050
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps"
+      ],
+      "density_min": 1,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "B3S",
+      "ids": [
+        256,
+        260,
+        262
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B3S_A",
+      "ids": [
+        275
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B3S_P",
+      "ids": [
+        272
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B4",
+      "ids": [
+        6656
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 832,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B4_PRO",
+      "ids": [
+        6657
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 1229,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "B50",
+      "ids": [
+        51713
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 400,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "B50W",
+      "ids": [
+        51714
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "BETTY",
+      "ids": [
+        2561
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 192,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "C1",
+      "ids": [
+        5120
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 178,
+      "paper_types": [
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "D101",
+      "ids": [
+        2560
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 192,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "D11",
+      "ids": [
+        512
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "D11_H",
+      "ids": [
+        528
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 142,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "D11_PRO",
+      "ids": [
+        531
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 142,
+      "paper_types": [
+        "Transparent",
+        "WithGaps"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "D110",
+      "ids": [
+        2304,
+        2305
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "D110_M",
+      "ids": [
+        2320
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "D11S",
+      "ids": [
+        514
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "EP1C",
+      "ids": [
+        5121
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 178,
+      "paper_types": [
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "EP2M_H",
+      "ids": [
+        4610
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 567,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "Black",
+        "BlackMarkGap"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "EP3M",
+      "ids": [
+        6402
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "Black",
+        "BlackMarkGap"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "ET10",
+      "ids": [
+        5376
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 1600,
+      "paper_types": [
+        "Continuous"
+      ],
+      "density_min": 3,
+      "density_max": 3,
+      "density_default": 3
+    },
+    {
+      "identifier": "FUST",
+      "ids": [
+        513
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "H1",
+      "ids": [
+        3840
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "H1S",
+      "ids": [
+        4352
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "HI_D110",
+      "ids": [
+        2305
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 120,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 3
+    },
+    {
+      "identifier": "HI_NB_D11",
+      "ids": [
+        512
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 120,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "JC_M90",
+      "ids": [
+        51461
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "JCB3S",
+      "ids": [
+        256
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 2
+    },
+    {
+      "identifier": "K2",
+      "ids": [
+        6144
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 448,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "K3",
+      "ids": [
+        4864
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 640,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "K3_ITD",
+      "ids": [
+        4868
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 640,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "K3_W",
+      "ids": [
+        4865
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 640,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "K4",
+      "ids": [
+        7168
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 832,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 15,
+      "density_default": 7
+    },
+    {
+      "identifier": "M2_H",
+      "ids": [
+        4608
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 567,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "Black",
+        "BlackMarkGap"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "M3",
+      "ids": [
+        6400
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps",
+        "Transparent",
+        "Black",
+        "BlackMarkGap"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "MP3K",
+      "ids": [
+        4866
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 640,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "MP3K_W",
+      "ids": [
+        4867
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 640,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "N1",
+      "ids": [
+        3586
+      ],
+      "dpi": 203,
+      "print_direction": "left",
+      "printhead_pixels": 96,
+      "paper_types": [
+        "WithGaps",
+        "HeatShrinkTube",
+        "Transparent",
+        "BlackMarkGap",
+        "Continuous"
+      ],
+      "density_min": 1,
+      "density_max": 3,
+      "density_default": 2
+    },
+    {
+      "identifier": "P1",
+      "ids": [
+        1024
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 697,
+      "paper_types": [
+        "PvcTag"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "P18",
+      "ids": [
+        1026
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 662,
+      "paper_types": [
+        "PvcTag"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "P1S",
+      "ids": [
+        1025
+      ],
+      "dpi": 300,
+      "print_direction": "left",
+      "printhead_pixels": 662,
+      "paper_types": [
+        "PvcTag"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "S1",
+      "ids": [
+        51458
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "S3",
+      "ids": [
+        51460
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "S6",
+      "ids": [
+        261,
+        259,
+        258,
+        257
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 576,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "S6_P",
+      "ids": [
+        274
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 600,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "T2S",
+      "ids": [
+        53250
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 832,
+      "paper_types": [
+        "WithGaps",
+        "Black"
+      ],
+      "density_min": 1,
+      "density_max": 20,
+      "density_default": 15
+    },
+    {
+      "identifier": "T6",
+      "ids": [
+        51715
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "T7",
+      "ids": [
+        51717
+      ],
+      "dpi": 203,
+      "print_direction": "top",
+      "printhead_pixels": 384,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "T8",
+      "ids": [
+        51718
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 567,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Continuous",
+        "Perforated"
+      ],
+      "density_min": 6,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "T8S",
+      "ids": [
+        2053
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps"
+      ],
+      "density_min": 1,
+      "density_max": 15,
+      "density_default": 10
+    },
+    {
+      "identifier": "TP2M_H",
+      "ids": [
+        4609
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 591,
+      "paper_types": [
+        "WithGaps",
+        "Black",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 5,
+      "density_default": 3
+    },
+    {
+      "identifier": "Z401",
+      "ids": [
+        2051
+      ],
+      "dpi": 300,
+      "print_direction": "top",
+      "printhead_pixels": 851,
+      "paper_types": [
+        "WithGaps",
+        "Transparent"
+      ],
+      "density_min": 1,
+      "density_max": 15,
+      "density_default": 10
+    }
+  ]
+}
