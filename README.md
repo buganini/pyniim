@@ -293,10 +293,9 @@ The first user-reported physical print is complete. The next hardware milestone 
 
 ## References
 
-- [brother_ql](https://github.com/pklaus/brother_ql): API and CLI design reference.
-- [niimbluelib](https://github.com/MultiMote/niimbluelib): NIIMBOT model and protocol implementation reference.
-- [NIIMBOT Community Wiki](https://printers.niim.blue/): Hardware and protocol research.
-- [niimbot-web-bluetooth](https://github.com/iscarelli/niimbot-web-bluetooth): BLE print workflows and model validation reference.
-- [Bleak](https://github.com/hbldh/bleak): Python BLE communication.
+- [brother_ql](https://github.com/pklaus/brother_ql) ([GPLv3](https://github.com/pklaus/brother_ql/blob/master/LICENSE)): API and CLI design reference; not a runtime dependency.
+- [niimbluelib](https://github.com/MultiMote/niimbluelib) ([MIT](https://github.com/MultiMote/niimbluelib/blob/35110a716c960448ee17a9270e4c3a131149866f/LICENSE)): Imported NIIMBOT model data and protocol implementation reference.
+- [NIIMBOT Community Wiki](https://printers.niim.blue/): Hardware and protocol research; content license not confirmed.
+- [niimbot-web-bluetooth](https://github.com/iscarelli/niimbot-web-bluetooth) ([MIT](https://github.com/iscarelli/niimbot-web-bluetooth/blob/main/LICENSE)): BLE print workflows and model validation reference.
 
 This project is licensed under the [MIT License](LICENSE). Model data comes from MIT-licensed niimbluelib; its original copyright notice and full license are distributed in `src/pyniim/data/niimbluelib-LICENSE.txt`. The Brother API is used as an interface design reference. See [THIRD_PARTY.md](THIRD_PARTY.md) for protocol research sources and attribution.

@@ -1,4 +1,36 @@
-# Third-party references
+# Third-party notices
+
+## Reference projects and imported data
+
+Reviewed on 2026-11-10. The following projects are design or research references
+or sources of imported data.
+
+| Project | License | Use in pyniim |
+| --- | --- | --- |
+| [brother_ql](https://github.com/pklaus/brother_ql) | [GPLv3](https://github.com/pklaus/brother_ql/blob/master/LICENSE) | API and CLI design reference; not a runtime dependency |
+| [niimbluelib](https://github.com/MultiMote/niimbluelib) | [MIT](https://github.com/MultiMote/niimbluelib/blob/35110a716c960448ee17a9270e4c3a131149866f/LICENSE) | Imported model data and protocol research |
+| [niimbot-web-bluetooth](https://github.com/iscarelli/niimbot-web-bluetooth) | [MIT](https://github.com/iscarelli/niimbot-web-bluetooth/blob/main/LICENSE) | Protocol and hardware testing reference |
+| [NIIMBOT Community Wiki](https://printers.niim.blue/) | Content license not confirmed | Hardware and protocol research |
+
+The imported niimbluelib data's original MIT license is included in both the
+source distribution and wheel, as described below.
+
+## Runtime dependencies
+
+These libraries provide runtime functionality. They are listed separately from
+the reference projects above. This is not a complete inventory of development
+tools or transitive dependencies.
+
+| Library | License | Use in pyniim |
+| --- | --- | --- |
+| [Bleak](https://github.com/hbldh/bleak) | [MIT](https://github.com/hbldh/bleak/blob/develop/LICENSE) | Runtime BLE dependency |
+| [Click](https://github.com/pallets/click) | [BSD-3-Clause](https://github.com/pallets/click/blob/main/LICENSE.txt) | Runtime CLI dependency |
+| [Pillow](https://github.com/python-pillow/Pillow) | [MIT-CMU](https://github.com/python-pillow/Pillow/blob/main/LICENSE) | Runtime image-processing dependency |
+
+The installed versions checked were Bleak 3.1.0, Click 8.5.1, and Pillow 13.0.0.
+These dependencies are installed separately, not vendored in the pyniim wheel,
+and retain their own licenses. The project's MIT license does not replace
+third-party notices.
 
 ## Model metadata
 
