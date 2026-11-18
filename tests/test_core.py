@@ -151,3 +151,25 @@ def test_cli_passes_write_delay_to_transport(monkeypatch, tmp_path, command):
     result = CliRunner().invoke(cli, ["--write-delay-ms", "25", "-p", "ble://test", *args])
     assert result.exit_code == 0, result.output
     assert calls == [("ble://test", "bleak", {"write_delay_ms": 25.0})]
+
+
+def test_discover_lists_only_supported_models(monkeypatch):
+    from pyniim.backends import helpers
+
+    async def fake_discover_devices(timeout):
+        return [
+            dict(identifier="ble://a", name="M2_H-1234", rssi=-50, service_match=False),
+            dict(identifier="ble://b", name="B1-5678", rssi=-60, service_match=True),
+            dict(identifier="ble://c", name=None, rssi=-70, service_match=False),
+            dict(identifier="ble://d", name="X M2_H-1", rssi=-70, service_match=False),
+        ]
+
+    monkeypatch.setattr(helpers, "discover_devices", fake_discover_devices)
+    devices = helpers.discover()
+    assert [(d["identifier"], d["model"]) for d in devices] == [("ble://a", "M2_H")]
+    every = helpers.discover(include_unsupported=True)
+    assert [d["model"] for d in every] == ["M2_H", None, None, None]
+
+    result = CliRunner().invoke(cli, ["discover", "--all", "--json"])
+    assert result.exit_code == 0, result.output
+    assert len(json.loads(result.output)) == 4

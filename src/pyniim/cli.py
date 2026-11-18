@@ -107,11 +107,19 @@ def cli(ctx, backend, model, printer, debug, bleak_debug, write_delay_ms):
 @cli.command()
 @click.option("--timeout", type=click.FloatRange(min=0, min_open=True), default=5.0)
 @click.option("--json", "as_json", is_flag=True)
+@click.option(
+    "--all", "include_unsupported", is_flag=True, help="List every BLE advertisement."
+)
 @click.pass_context
 @checked
-def discover(ctx, timeout, as_json):
-    """Scan BLE advertisements (includes unrecognized devices)."""
-    emit(discover_printers(ctx.obj["backend"], timeout=timeout), as_json)
+def discover(ctx, timeout, as_json, include_unsupported):
+    """Scan for printers whose advertised name starts with a print-supported model."""
+    emit(
+        discover_printers(
+            ctx.obj["backend"], timeout=timeout, include_unsupported=include_unsupported
+        ),
+        as_json,
+    )
 
 
 @cli.group()

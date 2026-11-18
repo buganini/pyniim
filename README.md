@@ -22,7 +22,7 @@ pyniim info models --json
 
 These instructions install the local package; it has not been published to PyPI. BLE operations require Bluetooth permissions and an available BLE adapter. Offline conversion and model queries do not require a connection.
 
-Use `pyniim discover --json` to find a device identifier, then pass it to `--printer`. Discovery lists all detected BLE advertisements, including devices not yet identified as NIIMBOT printers. The service and model ID are checked when connecting.
+Use `pyniim discover --json` to find a device identifier, then pass it to `--printer`. Discovery lists only devices whose advertised name contains a print-supported model (the name starts with `<model>-`, currently `M2_H-`, case-insensitive); pass `--all` (or `include_unsupported=True`) to list every BLE advertisement. The name match is a heuristic: the service and model ID are checked when connecting.
 
 A 40 × 30 mm label requires a **472 × 354 px** image with the current M2_H 300 DPI settings. Fixed-size labels are not automatically resized. A size mismatch reports the expected pixel dimensions; `rotate=auto` only handles swapped width and height.
 
