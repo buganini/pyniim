@@ -7,6 +7,8 @@ permissions:
 
 jobs:
   test:
+    # A hung asyncio test used to burn the 6 hour default before being cancelled.
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -22,6 +24,7 @@ jobs:
       - run: python -m pytest -q
 
   package:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

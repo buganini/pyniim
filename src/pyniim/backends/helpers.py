@@ -37,9 +37,7 @@ async def discover_async(backend_identifier="bleak", *, timeout=5.0, include_uns
 def discover(backend_identifier="bleak", *, timeout=5.0, include_unsupported=False):
     ensure_sync_context()
     return asyncio.run(
-        discover_async(
-            backend_identifier, timeout=timeout, include_unsupported=include_unsupported
-        )
+        discover_async(backend_identifier, timeout=timeout, include_unsupported=include_unsupported)
     )
 
 

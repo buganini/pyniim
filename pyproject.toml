@@ -28,6 +28,8 @@ pyniim = ["data/*.json", "data/*.txt"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
+# Dump every thread's stack if a test hangs (CI then fails at the job timeout).
+faulthandler_timeout = 120
 
 [tool.ruff]
 line-length = 100

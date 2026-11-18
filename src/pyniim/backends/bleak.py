@@ -124,12 +124,13 @@ class BleakTransport:
         for start in range(0, len(raw), size):
             if self.failure:
                 raise self.failure
-            await asyncio.wait_for(
-                self.client.write_gatt_char(
+            # Not asyncio.wait_for: on Python 3.11 it can swallow an outer cancellation
+            # (e.g. request()'s asyncio.timeout) that lands in the same loop tick as the
+            # write completing, which hung forever on Windows' coarse timer (gh-86296).
+            async with asyncio.timeout(self.timeout):
+                await self.client.write_gatt_char(
                     self.characteristic, raw[start : start + size], response=False
-                ),
-                self.timeout,
-            )
+                )
             # CoreBluetooth accepting a write is not proof the printer consumed
             # it. Pace every BLE chunk, including the last chunk before PageEnd.
             if self.write_delay_ms:
