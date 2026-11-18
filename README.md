@@ -6,7 +6,7 @@ A Python library and CLI for NIIMBOT label printers, starting with **M2_H printi
 
 This project is planned and developed with assistance from **GPT-6 Astra**.
 
-> **Status: 0.1.0a1, experimental.** An M2_H user reported successful physical printing over BLE on 2026-11-09 after the connection, acknowledgement, and pacing fixes. This is initial single-label evidence, not a complete hardware qualification; see the [hardware test record](docs/HARDWARE_TESTING.md). Of the 77 model records, only the M2_H is enabled for experimental printing; the others are available for reference only.
+> **Status: 202611181, experimental.** An M2_H user reported successful physical printing over BLE on 2026-11-09 after the connection, acknowledgement, and pacing fixes. This is initial single-label evidence, not a complete hardware qualification; see the [hardware test record](docs/HARDWARE_TESTING.md). Of the 77 model records, only the M2_H is enabled for experimental printing; the others are available for reference only.
 
 ## Installation and quick start
 

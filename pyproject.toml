@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyniim"
-version = "0.1.0a1"
+version = "202611181"
 description = "Experimental NIIMBOT M2_H BLE printing with a brother_ql-inspired API"
 readme = "README.md"
 license = "MIT"
